@@ -162,7 +162,9 @@ FLSRsim <- function(...){
     }      
         
     if('model' %in% slots){
-        nmparams <- all.vars(get(x[['model']], pos = 2)()[[2]])
+        # x <- list("model" = c("ricker","bevholt","segreg"))
+        nmparams <- unique(unlist(lapply(x[['model']], function(m)all.vars(get(m)()[[2]]))))
+        # nmparams <- all.vars(get(x[['model']], pos = 2)()[[2]])
         nmparams <- nmparams[!(nmparams %in% c('rec', 'ssb'))]
     }
     
@@ -232,12 +234,15 @@ SRsim <- function(object, year = 1, season = 1, iter = 'all')  # year and season
 
     # model call
     if(length(grep('~', object@model)) == 0)
-        model <- eval(call(object@model))[[2]]
+        # model <- eval(call(object@model))[[2]]
+        model <- lapply(object@model,function(x)eval(call(x))[[2]])
+    
     else # character but 'formula' 
         model <- formula(object@model)
     
-    model <- as.list(model)[[3]]
-     
+    # model <- as.list(model)[[3]]
+    model <- lapply(model, function(x)as.list(x)[[3]])
+    
     # Extract SSB season and year according to timelag, 
     # Extract two recruitments, recruitment in previous season and recruitment 
     # exactly one year before.
@@ -245,7 +250,7 @@ SRsim <- function(object, year = 1, season = 1, iter = 'all')  # year and season
     ss1 <- ifelse(ns == 1, 1, ifelse(ss == 1, ns, ss-1))
     yr1 <- ifelse(ss > 1, yr, yr-1)
     
-    datam <- list(ssb       =  (object@ssb[,yr - object@timelag[1,ss],, object@timelag[2,ss],]),
+    datam <- list(ssb       = c(object@ssb[,yr - object@timelag[1,ss],, object@timelag[2,ss],]),
                   rec.prevS = c(object@rec[,yr1,,ss1]),
                   rec.prevY = c(object@rec[,yr-1,,ss]))
 
@@ -258,7 +263,10 @@ SRsim <- function(object, year = 1, season = 1, iter = 'all')  # year and season
     for(i in names(object@covar))
       datam[[i]] <-  c(object@covar[[i]][,yr,, ss,])
     
-    res <- c(eval(model, datam))   # valid for 1 year, 1 season and 'N' iterations
+    datam <- asplit(do.call("cbind",datam),1)
+    
+    # res <- c(eval(model, datam))   # valid for 1 year, 1 season and 'N' iterations
+    res <- unlist(lapply(seq_along(model),function(x)eval(model[[x]], as.list(datam[[x]]))))
     
     object@rec[,yr,,ss,] <- res*object@proportion[,yr,,ss,]*object@uncertainty[,yr,,ss,]
     
