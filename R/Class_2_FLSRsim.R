@@ -62,8 +62,8 @@ validFLSRsim <- function(object){
   # model
     #if(length(object@model) != 1)  
     #      stop("Wrong length in 'model', it must be equal  1")  
-    if(length(grep('~', object@model)) == 0 &  class(eval(call(object@model))[[2]]) != 'formula')
-        stop("Specified 'model' is not defined in 'FLCore' or the specified formula is not correct")
+    #if(length(grep('~', object@model)) == 0 &  class(eval(call(object@model))[[2]]) != 'formula')
+    #    stop("Specified 'model' is not defined in 'FLCore' or the specified formula is not correct")
 
   # season in timelag must be >= 1 and <= ns
   if(any(object@timelag[2,] < 1 | object@timelag[2,] > Dim[4]))
