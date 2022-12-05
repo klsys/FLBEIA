@@ -166,7 +166,7 @@ FLSRsim <- function(...){
         if(!all(grepl('~', x[['model']]))) nmparams1 <- unique(unlist(lapply(x[['model']][!grepl('~', x[['model']])], function(m)all.vars(get(m)()[[2]]))))
 	if(any(grepl('~', x[['model']]))) nmparams2 <- unique(unlist(lapply(x[['model']][grepl('~', x[['model']])],function(x)all.vars(x))[[3]]))
         # nmparams <- all.vars(get(x[['model']], pos = 2)()[[2]])
-        nmparams <- c(nmparams,nmparams)
+        nmparams <- unique(c(nmparams1,nmparams2))
 	nmparams <- nmparams[!(nmparams %in% c('rec', 'ssb'))]
     }
     
