@@ -60,8 +60,8 @@ validFLSRsim <- function(object){
           stop(cat("Wrong dimension in 'timelag', it should be equal to:",c(2,Dim[4]), '\n'))  
     
   # model
-    if(length(object@model) != 1)  
-          stop("Wrong length in 'model', it must be equal  1")  
+    #if(length(object@model) != 1)  
+    #      stop("Wrong length in 'model', it must be equal  1")  
     if(length(grep('~', object@model)) == 0 &  class(eval(call(object@model))[[2]]) != 'formula')
         stop("Specified 'model' is not defined in 'FLCore' or the specified formula is not correct")
 
