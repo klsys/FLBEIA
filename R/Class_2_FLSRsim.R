@@ -241,7 +241,7 @@ SRsim <- function(object, year = 1, season = 1, iter = 'all')  # year and season
         model <- lapply(object@model,function(x)eval(call(x))[[2]])
     
     else # character but 'formula' 
-        model <- formula(object@model)
+        model <- unlist(lapply(SRs[[1]]@model,formula))
     
     # model <- as.list(model)[[3]]
     model <- lapply(model, function(x)as.list(x)[[3]])
